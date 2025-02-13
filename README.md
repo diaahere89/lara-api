@@ -72,6 +72,7 @@ Before you begin, ensure you have the following installed:
    ```bash
    git clone https://github.com/diaahere89/lara-api.git
    cd lara-api
+   git checkout final
     ```
 
 2. **Install PHP Dependencies**:

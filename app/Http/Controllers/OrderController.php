@@ -3,35 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Services\OrdersService;
 use Illuminate\Http\Request;
+use \Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(
+        private OrdersService $ordersService
+    ) {}
+
+    public function index(Request $request): JsonResponse
     {
-        $query = Order::query();
-
-        // Search by name or description
-        if ($request->has('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        // Filter by date
-        if ($request->has('date')) {
-            $query->whereDate('date', $request->input('date'));
-        }
-
-        return response()->json($query->get());
+        return $this->ordersService->searchOrders($request);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        $order = Order::create($request->only(['name', 'description', 'date']));
-        return response()->json($order, 201);
+        return $this->ordersService->createOrder($request);
     }
 
     public function show(Order $order)
@@ -41,13 +30,12 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order)
     {
-        $order->update($request->only(['name', 'description', 'date']));
-        return response()->json($order);
+        return $this->ordersService->updateOrder($request, $order);
     }
 
     public function destroy(Order $order)
     {
-        $order->delete();
-        return response()->noContent();
+        return $this->ordersService->deleteOrder($order);
     }
+    
 }

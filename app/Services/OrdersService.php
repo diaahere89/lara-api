@@ -43,15 +43,21 @@ class OrdersService
         return response()->json($orders)->header('X-Total-Count', $totalCount); // Add the X-Total-Count header;
     }
 
-    public function validateOrder(Request $request)
+    public function validateOrder(Request $request, ?bool $updated=false)
     {
-        $validatedData = $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'products' => 'required|array', // Ensure products array is present
             'products.*.product_id' => 'required|exists:products,id', // Validate product IDs
             'products.*.quantity' => 'required|integer|min:1', // Validate quantities
-        ]);
+        ];
+        if ($updated) {
+            $rules['name'] = 'sometimes|string|max:255';
+            $rules['products.*.quantity'] = 'required|integer'; // Validate quantities
+        }
+
+        $validatedData = $request->validate($rules);
         
         if ( ! $validatedData ) {
             return response()->json(['error' => 'Invalid data'], 400);
@@ -113,7 +119,7 @@ class OrdersService
     public function updateOrder(Request $request, Order $order): JsonResponse
     {
         // Validate the request
-        $validatedData = $this->validateOrder($request);
+        $validatedData = $this->validateOrder($request, updated: true);
 
         $productModel = null;
         $product = null;

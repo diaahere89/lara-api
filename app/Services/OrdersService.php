@@ -28,7 +28,19 @@ class OrdersService
             $query->whereDate('date', $request->input('date'));
         }
 
-        return response()->json($query->get());
+        // Get the total count of orders (for pagination)
+        $totalCount = Order::count();
+
+        $orders = $query->get()->map(function ($order) {
+            $order->products = DB::table('order_products')
+            ->where('order_id', $order->id)
+            ->join('products', 'order_products.product_id', '=', 'products.id')
+            ->select('products.id as product_id', 'products.name as product_name', 'order_products.quantity')
+            ->get();
+            return $order;
+        });
+
+        return response()->json($orders)->header('X-Total-Count', $totalCount); // Add the X-Total-Count header;
     }
 
     public function validateOrder(Request $request)

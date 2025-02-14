@@ -96,14 +96,21 @@ Before you begin, ensure you have the following installed:
     DB_PASSWORD=your_password
     ```
 
+   - Start the Laravel Sail development server:
+    ```bash
+    ./vendor/bin/sail artisan key:generate
+    ```
+
     - Generate an application key:
     ```bash
     ./vendor/bin/sail artisan key:generate
     ```
+
     - Run database migrations:
     ```bash
     ./vendor/bin/sail artisan migrate
     ```
+    
     - Seed the database with sample data:
     ```bash
     ./vendor/bin/sail artisan db:seed

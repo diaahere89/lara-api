@@ -96,7 +96,7 @@ Before you begin, ensure you have the following installed:
     DB_PASSWORD=your_password
     ```
 
-   - Start the Laravel Sail development server:
+   - Start the Laravel Sail development server in order to be able to run the followin artisan commands:
     ```bash
     ./vendor/bin/sail artisan key:generate
     ```
@@ -148,6 +148,8 @@ Before you begin, ensure you have the following installed:
     VITE_API_URL=http://localhost:80/api
     ```
 
+---
+
 ## Running the Project
 ### Backend
    - Start the Laravel Sail development server:
@@ -171,6 +173,7 @@ To run the unit tests, use the following command:
 ./vendor/bin/sail test
 ```
 
+---
 
 ## API Documentation
 
@@ -214,26 +217,36 @@ curl -X POST http://localhost:80/api/orders \
 }'
 ```
 
+---
+
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Docker Containers Not Starting**:
-   - Ensure Docker is running.
-   - Run `docker-compose up -d` to start the containers manually.
+1. **Ports Occupied On Your Host Machine**:
+   - Check if the ports 80 and 3306 are already in use on your host machine.
+   - Usually, the ports 80 and 3306 are used by the web server and the database server, respectively.
+   - If they are, you can either stop the services using those ports or change the ports in the `docker-compose.yml` file.
+   - For example, you can change the ports to 8080 and 3307 in the `docker-compose.yml` file.
+   - Then, run `docker-compose down && docker-compose up -d` to start the containers with the new ports.
 
-2. **Database Connection Issues**:
+2. **Docker Containers Not Starting**:
+   - Ensure Docker is running.
+   - Run `docker-compose up` to start the containers manually and see if there are any errors.
+   - Run `docker-compose logs` to see the logs of the containers.
+
+3. **Database Connection Issues**:
    - Verify the database credentials in the `.env` file.
    - Ensure the MySQL container is running.
 
-3. **Frontend Not Connecting to Backend**:
+4. **Frontend Not Connecting to Backend**:
    - Ensure the `VITE_API_URL` in the frontend `.env` file matches the backend URL.
 
-4. **401 Unauthorized Errors**:
+5. **401 Unauthorized Errors**:
    - Ensure the user is authenticated and the correct token is included in API requests.
    - Verify that Laravel Sanctum is properly configured.
 
-5. **Missing `order_product` Table**:
+6. **Missing `order_product` Table**:
    - Run the migration to create the `order_product` pivot table:
      ```bash
      ./vendor/bin/sail artisan migrate
